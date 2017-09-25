@@ -5,7 +5,10 @@ import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -31,14 +34,32 @@ public class MainActivity extends AppCompatActivity {
         btnParse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: Add parse activation code
                 ParseApplications parseApplications = new ParseApplications(mFileContents);
                 parseApplications.process();
+                ArrayAdapter<Application> arrayAdapter = new ArrayAdapter<Application>( MainActivity.this, R.layout.list_item, parseApplications.getApplications());
+                listApps.setAdapter(arrayAdapter);
             }
         });
         listApps = (ListView) findViewById(R.id.xmlListView);
         DownloadData downloadData = new DownloadData();
         downloadData.execute("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml");
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        //Inflate the menu; this adds items to the action bar if it is present
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        //handle action bar item clicks here. The action bar will automatically handle clicks on the Home/Up button
+        int id = item.getItemId();
+        //no inspection SimplifiableIfStatement
+        if(id == R.id.action_settings){
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private class DownloadData extends AsyncTask<String, Void, String> {
